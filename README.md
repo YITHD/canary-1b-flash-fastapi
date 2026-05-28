@@ -44,7 +44,7 @@ apt-get install ffmpeg libsndfile1
 ```bash
 uv venv                                   # create .venv (uv auto-detects it)
 uv pip install -r requirements.txt        # installs NeMo + torch (large)
-uv run python -m app.main                 # serves on 0.0.0.0:8000
+uv run python -m app.main                 # serves on 0.0.0.0:8777
 ```
 
 `uv run` activates `.venv` automatically, so you don't have to `source` it.
@@ -55,7 +55,7 @@ To use a specific Python version: `uv venv --python 3.11`.
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt           # installs NeMo + torch (large)
-python -m app.main                         # serves on 0.0.0.0:8000
+python -m app.main                         # serves on 0.0.0.0:8777
 ```
 
 First start downloads the model from Hugging Face (~1B params). A CUDA GPU is
@@ -65,7 +65,7 @@ strongly recommended; CPU works but is slow.
 
 ```bash
 docker build -t canary-flash .
-docker run --gpus all -p 8000:8000 canary-flash
+docker run --gpus all -p 8777:8777 canary-flash
 ```
 
 ## Usage
@@ -74,13 +74,13 @@ docker run --gpus all -p 8000:8000 canary-flash
 
 ```bash
 # Transcribe English audio
-curl http://localhost:8000/v1/audio/transcriptions \
+curl http://localhost:8777/v1/audio/transcriptions \
   -F file=@sample.wav \
   -F model=canary-1b-flash \
   -F language=en
 
 # Translate Spanish speech to English with subtitles
-curl http://localhost:8000/v1/audio/translations \
+curl http://localhost:8777/v1/audio/translations \
   -F file=@spanish.wav \
   -F language=es \
   -F response_format=srt
@@ -91,7 +91,7 @@ curl http://localhost:8000/v1/audio/translations \
 ```python
 from openai import OpenAI
 
-client = OpenAI(base_url="http://localhost:8000/v1", api_key="not-needed")
+client = OpenAI(base_url="http://localhost:8777/v1", api_key="not-needed")
 
 with open("sample.wav", "rb") as f:
     out = client.audio.transcriptions.create(
@@ -115,7 +115,7 @@ All settings are environment variables prefixed with `CANARY_` (see
 | `CANARY_COMPUTE_DTYPE` | `float32` | `float16`/`bfloat16` on GPU saves memory |
 | `CANARY_BEAM_SIZE` | `1` | greedy decoding by default |
 | `CANARY_API_KEY` | _(empty)_ | when set, requires `Authorization: Bearer <key>` |
-| `CANARY_PORT` | `8000` | listen port |
+| `CANARY_PORT` | `8777` | listen port |
 
 ## Notes on translation
 

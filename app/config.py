@@ -34,7 +34,7 @@ class Settings(BaseSettings):
 
     # Server
     host: str = "0.0.0.0"
-    port: int = 8000
+    port: int = 8777
     # Optional bearer token. When set, requests must send
     # `Authorization: Bearer <token>`. Empty disables auth.
     api_key: str = ""

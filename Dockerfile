@@ -15,5 +15,5 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 
 COPY app ./app
 
-EXPOSE 8000
+EXPOSE 8777
 CMD ["python", "-m", "app.main"]
