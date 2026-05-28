@@ -1,0 +1,15 @@
+# Web server
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9
+pydantic>=2.6.0
+pydantic-settings>=2.2.0
+
+# Audio handling
+soundfile>=0.12.1
+librosa>=0.10.1
+numpy>=1.24.0
+
+# Model (NVIDIA NeMo) -- installs torch as a dependency.
+# NeMo ASR is heavy; install with: pip install "nemo_toolkit[asr]"
+nemo_toolkit[asr]>=2.0.0
