@@ -31,11 +31,31 @@ and `vtt`. Word timestamps appear in `verbose_json` when you request
 
 ## Quick start
 
+System deps for audio decoding (any OS package manager works):
+
 ```bash
-pip install -r requirements.txt          # installs NeMo + torch (large)
-# System deps for audio decoding:
-#   apt-get install ffmpeg libsndfile1
-python -m app.main                        # serves on 0.0.0.0:8000
+apt-get install ffmpeg libsndfile1
+```
+
+### With uv (recommended)
+
+[uv](https://docs.astral.sh/uv/) handles the virtualenv and install for you:
+
+```bash
+uv venv                                   # create .venv (uv auto-detects it)
+uv pip install -r requirements.txt        # installs NeMo + torch (large)
+uv run python -m app.main                 # serves on 0.0.0.0:8000
+```
+
+`uv run` activates `.venv` automatically, so you don't have to `source` it.
+To use a specific Python version: `uv venv --python 3.11`.
+
+### With pip
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt           # installs NeMo + torch (large)
+python -m app.main                         # serves on 0.0.0.0:8000
 ```
 
 First start downloads the model from Hugging Face (~1B params). A CUDA GPU is
@@ -110,6 +130,12 @@ The HTTP layer can be tested without NeMo, torch, or a GPU — the model is
 mocked and loading is skipped:
 
 ```bash
+# uv
+uv pip install fastapi uvicorn python-multipart pydantic pydantic-settings \
+               soundfile librosa numpy pytest httpx
+CANARY_SKIP_MODEL_LOAD=1 uv run pytest
+
+# pip
 pip install fastapi uvicorn python-multipart pydantic pydantic-settings \
             soundfile librosa numpy pytest httpx
 CANARY_SKIP_MODEL_LOAD=1 pytest
