@@ -1,0 +1,52 @@
+# Example systemd unit for the Canary-1B-Flash OpenAI-compatible server.
+#
+# Install:
+#   sudo cp deploy/canary-flash.service /etc/systemd/system/
+#   # edit paths/user/env below to match your host, then:
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now canary-flash
+#
+# Logs:   journalctl -u canary-flash -f
+# Status: systemctl status canary-flash
+
+[Unit]
+Description=Canary-1B-Flash OpenAI-compatible API
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# Run as an unprivileged user that owns the install dir and HF cache.
+User=canary
+Group=canary
+
+# Absolute path to the checkout.
+WorkingDirectory=/opt/canary-1b-flash-fastapi
+
+# Settings can also live in an env file (CANARY_*). Uncomment to use it:
+# EnvironmentFile=/opt/canary-1b-flash-fastapi/.env
+Environment=CANARY_HOST=0.0.0.0
+Environment=CANARY_PORT=8777
+Environment=CANARY_DEVICE=auto
+# Cache the downloaded model somewhere persistent and writable by User=.
+Environment=HF_HOME=/var/lib/canary/huggingface
+
+# Use the project's virtualenv interpreter (created via uv or venv).
+ExecStart=/opt/canary-1b-flash-fastapi/.venv/bin/python -m app.main
+
+Restart=on-failure
+RestartSec=5
+# Model load + download can take a while on first boot.
+TimeoutStartSec=600
+
+# --- Hardening (loosen if it conflicts with your setup) ---
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+# Writable paths the service needs (HF cache, temp wavs go to PrivateTmp).
+ReadWritePaths=/var/lib/canary
+
+[Install]
+WantedBy=multi-user.target

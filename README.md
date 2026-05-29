@@ -68,6 +68,22 @@ docker build -t canary-flash .
 docker run --gpus all -p 8777:8777 canary-flash
 ```
 
+### systemd (run as a service)
+
+An example unit is provided at
+[`deploy/canary-flash.service`](deploy/canary-flash.service). Edit the paths,
+user, and env vars to match your host, then:
+
+```bash
+sudo cp deploy/canary-flash.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now canary-flash
+journalctl -u canary-flash -f          # follow logs
+```
+
+It runs the project's virtualenv interpreter (`/opt/.../.venv/bin/python`),
+restarts on failure, and ships with light sandboxing you can relax if needed.
+
 ## Usage
 
 ### curl
